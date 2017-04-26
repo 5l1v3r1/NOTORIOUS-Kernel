@@ -17,9 +17,9 @@ PAGE_SIZE=2048
 DTB_PADDING=0
 
 if [ $MODEL = herolte ]; then
-	KERNEL_DEFCONFIG=favus-exynos8890-hero2lte_defconfig
+	KERNEL_DEFCONFIG=notorious-exynos8890-herolte_defconfig
 else if [ $MODEL = hero2lte ]; then
-	KERNEL_DEFCONFIG=favus-exynos8890-hero2lte_defconfig
+	KERNEL_DEFCONFIG=notorious-exynos8890-hero2lte_defconfig
 else
 	echo "Unknown device: $MODEL"
 	exit 1
