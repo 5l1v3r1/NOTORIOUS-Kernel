@@ -431,7 +431,7 @@ static int avc_xperms_populate(struct avc_node *node,
 		if (!dest_xpd)
 			goto error;
 		avc_copy_xperms_decision(&dest_xpd->xpd, &src_xpd->xpd);
-	  list_add(&dest_xpd->xpd_list, &dest->xpd_head);
+		list_add(&dest_xpd->xpd_list, &dest->xpd_head);
 	}
 	node->ae.xp_node = dest;
 	return 0;
@@ -1048,10 +1048,10 @@ static noinline int avc_denied(u32 ssid, u32 tsid,
 
 #if defined(CONFIG_SECURITY_SELINUX_ALWAYS_ENFORCE)
 	if (!(avd->flags & AVD_FLAGS_PERMISSIVE))
-	return -EACCES;
+		return -EACCES;
 #elif !defined(CONFIG_SECURITY_SELINUX_NEVER_ENFORCE)
 	if (selinux_enforcing && !(avd->flags & AVD_FLAGS_PERMISSIVE))
-			return -EACCES;
+		return -EACCES;
 #endif
 // ] SEC_SELINUX_PORTING_COMMON
 
