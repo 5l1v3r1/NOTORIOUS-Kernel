@@ -411,8 +411,8 @@ KBUILD_CPPFLAGS := -D__KERNEL__
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
-		   -Wno-format-security \
-		   -mtune=cortex-a72.cortex-a53 \
+		   -Wno-format-security -Wno-logical-not-parentheses \
+		   -mtune=cortex-a72.cortex-a53 -Wno-misleading-indentation\
 		   -std=gnu89
 
 KBUILD_AFLAGS_KERNEL :=
@@ -645,9 +645,13 @@ include $(srctree)/arch/$(SRCARCH)/Makefile
 KBUILD_CFLAGS	+= $(call cc-option,-fno-delete-null-pointer-checks,)
 
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
-KBUILD_CFLAGS	+= -Os $(call cc-disable-warning,maybe-uninitialized,)
+KBUILD_CFLAGS	+= -Os
 else
 KBUILD_CFLAGS	+= -O2
+endif
+
+ifdef CONFIG_KERNEL_OPTIMIZATION
+KBUILD_CFLAGS	+= -march=armv8-a -mtune=cortex-a72.cortex-a53
 endif
 
 # Tell gcc to never replace conditional load with a non-conditional one
@@ -751,15 +755,15 @@ KBUILD_CFLAGS	+= $(call cc-option, -gdwarf-4,)
 endif
 
 ifdef CONFIG_RKP_CFP_JOPP
-# Don't use jump tables for switch statements, since this generates indirect jump (br) 
+# Don't use jump tables for switch statements, since this generates indirect jump (br)
 # instructions, which are very dangerous for kernel control flow integrity.
 KBUILD_CFLAGS	+= -fno-jump-tables
-endif 
+endif
 
 ifdef CONFIG_RKP_CFP_ROPP
 # Don't let gcc allocate these registers, they are reserved for use by static binary instrumentation.
 KBUILD_CFLAGS	+= -ffixed-x16 -ffixed-x17
-endif 
+endif
 
 ifdef CONFIG_DEBUG_INFO_REDUCED
 KBUILD_CFLAGS 	+= $(call cc-option, -femit-struct-debug-baseonly) \
