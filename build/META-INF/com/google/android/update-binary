@@ -9,9 +9,9 @@ ui_print() {
 }
 
 cd /tmp
-rm -rf farovitus
-mkdir farovitus
-cd farovitus
+rm -rf notorious
+mkdir notorious
+cd notorious
 unzip -o "$ZIP"
 
 getprop ro.boot.bootloader >> BLmodel
@@ -23,7 +23,7 @@ mount /system
 ui_print " - mounting data partition"
 mount /data
 
-ui_print " - Installing FAVUS"
+ui_print " - Installing NOTORIOUS Kernel"
 
 if grep -q G935 BLmodel; then
 	cat hero2lte-eur.img > /dev/block/platform/155a0000.ufs/by-name/BOOT
@@ -45,7 +45,7 @@ rm -f /system/vendor/lib64/libsecure_storage.so
 mkdir /system/etc/init.d
 
 cd
-cd /tmp/farovitus
+cd /tmp/notorious
 mv -f mcRegistry /system/app
 mv -f vendor/lib/libsecure_storage.so /system/vendor/lib/libsecure_storage.so
 mv -f vendor/lib64/libsecure_storage.so /system/vendor/lib64/libsecure_storage.so
@@ -71,5 +71,5 @@ umount /system > /dev/null 2>&1
 
 ui_print " "
 ui_print "finished"
-rm -rf /tmp/farovitus
+rm -rf /tmp/notorious
 sync
