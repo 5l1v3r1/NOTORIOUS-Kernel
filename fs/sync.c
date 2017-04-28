@@ -17,6 +17,11 @@
 #include <linux/backing-dev.h>
 #include "internal.h"
 
+#ifdef CONFIG_DYNAMIC_FSYNC
+extern bool power_suspend_active;
+extern bool dyn_fsync_active;
+#endif
+
 #define VALID_FLAGS (SYNC_FILE_RANGE_WAIT_BEFORE|SYNC_FILE_RANGE_WRITE| \
 			SYNC_FILE_RANGE_WAIT_AFTER)
 
@@ -66,7 +71,7 @@ static struct workqueue_struct *intr_sync_wq;
 /* It prevents double allocation of intr_sync_wq */
 static DEFINE_MUTEX(intr_sync_wq_lock);
 
-static inline struct interruptible_sync_work *INTR_SYNC_WORK(struct work_struct *work) 
+static inline struct interruptible_sync_work *INTR_SYNC_WORK(struct work_struct *work)
 {
 	return container_of(work, struct interruptible_sync_work, work);
 }
@@ -85,7 +90,7 @@ static void do_intr_sync(struct work_struct *work)
 
 	dbg_print("\n[intr_sync] %s : call sys_sync on work[%d]-%ld\n",
 			__func__, sync_work->id, sync_work->version);
-	
+
 	/* if no one waits, do not call sync() */
 	if (waiter) {
 		ret = sys_sync();
@@ -161,7 +166,7 @@ find_idle:
 			queue_work(intr_sync_wq, &sync_work->work);
 		}
 		spin_unlock(&sync_work->lock);
-		
+
 		/* Return: 0 if timed out, and positive if completed. */
 		do {
 //			dbg_print("[intr_sync] waiting work[%d]\n", work_idx);
@@ -300,6 +305,22 @@ static void fdatawait_one_bdev(struct block_device *bdev, void *arg)
 	filemap_fdatawait(bdev->bd_inode->i_mapping);
 }
 
+
+#ifdef CONFIG_DYNAMIC_FSYNC
+/*
+ * Sync all the data for all the filesystems (called by sys_sync() and
+ * emergency sync)
+ */
+void sync_filesystems(int wait)
+{
+	iterate_supers(sync_inodes_one_sb, NULL);
+	iterate_supers(sync_fs_one_sb, &wait);
+	iterate_supers(sync_fs_one_sb, &wait);
+	iterate_bdevs(fdatawrite_one_bdev, NULL);
+	iterate_bdevs(fdatawait_one_bdev, NULL);
+}
+#endif
+
 /*
  * Sync everything. We start by waking flusher threads so that most of
  * writeback runs on all devices in parallel. Then we sync all inodes reliably
@@ -315,7 +336,7 @@ SYSCALL_DEFINE0(sync)
 	int nowait = 0, wait = 1;
 
 #ifndef CONFIG_SAMSUNG_PRODUCT_SHIP
-	printk("sync logger: sync called by %s[%u] (tgid:%u)\n", 
+	printk("sync logger: sync called by %s[%u] (tgid:%u)\n",
 		current->comm, current->pid,  pid_vnr(task_tgid(current)));
 #endif
 	wakeup_flusher_threads(0, WB_REASON_SYNC);
@@ -327,7 +348,7 @@ SYSCALL_DEFINE0(sync)
 	if (unlikely(laptop_mode))
 		laptop_sync_completion();
 #ifndef CONFIG_SAMSUNG_PRODUCT_SHIP
-	printk("sync logger: sync done by %s[%u]\n", 
+	printk("sync logger: sync done by %s[%u]\n",
 		current->comm, current->pid);
 #endif
 	return 0;
@@ -406,9 +427,17 @@ SYSCALL_DEFINE1(syncfs, int, fd)
  */
 int vfs_fsync_range(struct file *file, loff_t start, loff_t end, int datasync)
 {
+#ifdef CONFIG_DYNAMIC_FSYNC
+	if (likely(dyn_fsync_active && !power_suspend_active))
+		return 0;
+	else {
+#endif
 	if (!file->f_op->fsync)
 		return -EINVAL;
 	return file->f_op->fsync(file, start, end, datasync);
+#ifdef CONFIG_DYNAMIC_FSYNC
+	}
+#endif
 }
 EXPORT_SYMBOL(vfs_fsync_range);
 
@@ -440,6 +469,11 @@ static int do_fsync(unsigned int fd, int datasync)
 
 SYSCALL_DEFINE1(fsync, unsigned int, fd)
 {
+#ifdef CONFIG_DYNAMIC_FSYNC
+	if (likely(dyn_fsync_active && !power_suspend_active))
+		return 0;
+	else
+#endif
 	return do_fsync(fd, 0);
 }
 
@@ -498,6 +532,11 @@ SYSCALL_DEFINE1(fdatasync, unsigned int, fd)
 SYSCALL_DEFINE4(sync_file_range, int, fd, loff_t, offset, loff_t, nbytes,
 				unsigned int, flags)
 {
+#ifdef CONFIG_DYNAMIC_FSYNC
+	if (likely(dyn_fsync_active && !power_suspend_active))
+		return 0;
+	else {
+#endif
 	int ret;
 	struct fd f;
 	struct address_space *mapping;
@@ -576,6 +615,9 @@ out_put:
 	fdput(f);
 out:
 	return ret;
+#ifdef CONFIG_DYNAMIC_FSYNC
+	}
+#endif
 }
 
 /* It would be nice if people remember that not all the world's an i386
@@ -583,5 +625,10 @@ out:
 SYSCALL_DEFINE4(sync_file_range2, int, fd, unsigned int, flags,
 				 loff_t, offset, loff_t, nbytes)
 {
+#ifdef CONFIG_DYNAMIC_FSYNC
+	if (likely(dyn_fsync_active && !power_suspend_active))
+		return 0;
+	else
+#endif
 	return sys_sync_file_range(fd, offset, nbytes, flags);
 }
