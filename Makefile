@@ -411,12 +411,8 @@ KBUILD_CPPFLAGS := -D__KERNEL__
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
-		   -Wno-format-security -Werror \
-		   -mtune=exynos-m1 -fgraphite-identity \
-		   -fgcse-sm -fgcse-las -fgcse-lm \
-		   -floop-nest-optimize -ftree-loop-ivcanon \
-		   -ftree-loop-distribution -ftree-loop-im \
-		   -funroll-loops -fmodulo-sched \
+		   -Wno-format-security -Wno-logical-not-parentheses \
+		   -mtune=cortex-a72.cortex-a53 -Wno-misleading-indentation\
 		   -std=gnu89
 
 KBUILD_AFLAGS_KERNEL :=
@@ -651,7 +647,7 @@ KBUILD_CFLAGS	+= $(call cc-option,-fno-delete-null-pointer-checks,)
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os
 else
-KBUILD_CFLAGS	+= -Ofast
+KBUILD_CFLAGS	+= -O2
 endif
 
 ifdef CONFIG_KERNEL_OPTIMIZATION
