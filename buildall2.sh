@@ -1,7 +1,7 @@
 #!/bin/bash
 # kernel build script by Tkkg1994 v0.6 (optimized from apq8084 kernel source)
 
-export MODEL=herolte
+export MODEL=hero2lte
 export VARIANT=eur
 export ARCH=arm64
 export VERSION=V1.3
