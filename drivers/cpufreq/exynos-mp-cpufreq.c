@@ -141,7 +141,7 @@ static BLOCKING_NOTIFIER_HEAD(exynos_cpufreq_init_notifier_list);
 static struct sec_debug_auto_comm_freq_info* auto_comm_cpufreq_info;
 void sec_debug_set_auto_comm_last_cpufreq_buf(struct sec_debug_auto_comm_freq_info* freq_info)
 {
-	auto_comm_cpufreq_info = freq_info;
+	auto_comm_cpufreq_info = freq_info;	
 }
 #endif
 
@@ -1890,10 +1890,6 @@ static int exynos_cluster0_min_qos_handler(struct notifier_block *b, unsigned lo
 	threshold_freq = cpufreq_interactive_get_hispeed_freq(0);
 	if (!threshold_freq)
 		threshold_freq = 1000000;	/* 1.0GHz */
-#elif defined(CONFIG_CPU_FREQ_GOV_CAFACTIVE)
-	threshold_freq = cpufreq_cafactive_get_hispeed_freq(0);
-	if (!threshold_freq)
-		threshold_freq = 1000000;	/* 1.0GHz */
 #else
 	threshold_freq = 1000000;	/* 1.0GHz */
 #endif
@@ -2772,7 +2768,7 @@ static int __init exynos_mp_cpufreq_init(void)
 
 	return platform_driver_register(&exynos_mp_cpufreq_driver);
 }
-#if defined(CONFIG_CPU_FREQ_DEFAULT_GOV_INTERACTIVE) || defined(CONFIG_CPU_FREQ_DEFAULT_GOV_CAFACTIVE)
+#ifdef CONFIG_CPU_FREQ_DEFAULT_GOV_INTERACTIVE
 device_initcall(exynos_mp_cpufreq_init);
 #else
 late_initcall(exynos_mp_cpufreq_init);
