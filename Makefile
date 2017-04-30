@@ -411,8 +411,12 @@ KBUILD_CPPFLAGS := -D__KERNEL__
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
-		   -Wno-format-security -Wno-logical-not-parentheses \
-		   -mtune=cortex-a72.cortex-a53 -Wno-misleading-indentation\
+		   -Wno-format-security -Werror \
+		   -mtune=exynos-m1 -fgraphite-identity \
+		   -fgcse-sm -fgcse-las -fgcse-lm \
+		   -floop-nest-optimize -ftree-loop-ivcanon \
+		   -ftree-loop-distribution -ftree-loop-im \
+		   -funroll-loops -fmodulo-sched \
 		   -std=gnu89
 
 KBUILD_AFLAGS_KERNEL :=
@@ -647,7 +651,7 @@ KBUILD_CFLAGS	+= $(call cc-option,-fno-delete-null-pointer-checks,)
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os
 else
-KBUILD_CFLAGS	+= -O2
+KBUILD_CFLAGS	+= -Ofast
 endif
 
 ifdef CONFIG_KERNEL_OPTIMIZATION
@@ -754,17 +758,6 @@ ifdef CONFIG_DEBUG_INFO_DWARF4
 KBUILD_CFLAGS	+= $(call cc-option, -gdwarf-4,)
 endif
 
-ifdef CONFIG_RKP_CFP_JOPP
-# Don't use jump tables for switch statements, since this generates indirect jump (br)
-# instructions, which are very dangerous for kernel control flow integrity.
-KBUILD_CFLAGS	+= -fno-jump-tables
-endif
-
-ifdef CONFIG_RKP_CFP_ROPP
-# Don't let gcc allocate these registers, they are reserved for use by static binary instrumentation.
-KBUILD_CFLAGS	+= -ffixed-x16 -ffixed-x17
-endif
-
 ifdef CONFIG_DEBUG_INFO_REDUCED
 KBUILD_CFLAGS 	+= $(call cc-option, -femit-struct-debug-baseonly) \
 		   $(call cc-option,-fno-var-tracking)
@@ -823,14 +816,6 @@ ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC)), y)
 endif
 
 include $(srctree)/scripts/Makefile.extrawarn
-
-#Disable the whole of the following block to disable LKM AUTH
-ifeq ($(CONFIG_TIMA_LKMAUTH),y)
-ifeq ($(CONFIG_TIMA),y)
-    KBUILD_CFLAGS += -DTIMA_LKM_AUTH_ENABLED -Idrivers/gud/gud-exynos8890/MobiCoreDriver/mci/
-    KBUILD_AFLAGS += -DTIMA_LKM_AUTH_ENABLED
-endif
-endif
 
 # Add user supplied CPPFLAGS, AFLAGS and CFLAGS as the last assignments
 KBUILD_CPPFLAGS += $(KCPPFLAGS)
