@@ -3,13 +3,13 @@
  * Basically selected code segments from usb-cdc.c and usb-rndis.c
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
- * 
+ *
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
  * under the terms of the GNU General Public License version 2 (the "GPL"),
  * available at http://www.broadcom.com/licenses/GPLv2.php, with the
  * following added to such license:
- * 
+ *
  *      As a special exception, the copyright holders of this software give you
  * permission to link this software with independent modules, and to copy and
  * distribute the resulting executable under terms of your choice, provided that
@@ -17,7 +17,7 @@
  * the license of that module.  An independent module is a module which is not
  * derived from this software.  The special exception does not apply to any
  * modifications of the software.
- * 
+ *
  *      Notwithstanding the above, under no circumstances may you combine this
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
@@ -252,7 +252,7 @@ extern void dhd_enable_oob_intr(struct dhd_bus *bus, bool enable);
 #endif /* defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID) */
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27))
 static void dhd_hang_process(void *dhd_info, void *event_data, u8 event);
-#endif 
+#endif
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
 MODULE_LICENSE("GPL and additional rights");
 #endif /* LinuxVer */
@@ -881,7 +881,7 @@ static char *st_str_file_path = "/root/rtecdc.bin";
 static char *map_file_path = "/root/rtecdc.map";
 static char *rom_st_str_file_path = "/root/roml.bin";
 static char *rom_map_file_path = "/root/roml.map";
-#endif 
+#endif
 
 #define BYTES_AHEAD_NUM		11	/* address in map file is before these many bytes */
 #define READ_NUM_BYTES		1000 /* read map file each time this No. of bytes */
@@ -5619,7 +5619,7 @@ static bool dhd_check_hang(struct net_device *net, dhd_pub_t *dhdp, int error)
 		DHD_ERROR(("%s : skipped due to negative pid - unloading?\n", __FUNCTION__));
 		return FALSE;
 	}
-#endif 
+#endif
 
 	if ((error == -ETIMEDOUT) || (error == -EREMOTEIO) ||
 		((dhdp->busstate == DHD_BUS_DOWN) && (!dhdp->dongle_reset))) {
@@ -6105,7 +6105,7 @@ exit:
 		}
 	}
 #endif /* SUPPORT_DEEP_SLEEP */
-#endif 
+#endif
 	dhd->pub.hang_was_sent = 0;
 
 	/* Clear country spec for for built-in type driver */
@@ -6247,7 +6247,7 @@ dhd_open(struct net_device *net)
 		goto exit;
 	}
 
-#endif 
+#endif
 
 	ifidx = dhd_net2idx(dhd, net);
 	DHD_TRACE(("%s: ifidx %d\n", __FUNCTION__, ifidx));
@@ -6301,7 +6301,7 @@ dhd_open(struct net_device *net)
 			dhd_fix_cpu_freq(dhd);
 		}
 #endif /* FIX_CPU_MIN_CLOCK */
-#endif 
+#endif
 
 		if (dhd->pub.busstate != DHD_BUS_DATA) {
 
@@ -7108,7 +7108,7 @@ dhd_attach(osl_t *osh, struct dhd_bus *bus, uint bus_hdrlen)
 	/* will implement get_ids for DBUS later */
 #if defined(BCMSDIO)
 	dhd_bus_get_ids(bus, &bus_type, &bus_num, &slot_num);
-#endif 
+#endif
 	adapter = dhd_wifi_platform_get_adapter(bus_type, bus_num, slot_num);
 
 	/* Allocate primary dhd_info */
@@ -8008,7 +8008,7 @@ void dhd_tdls_update_peer_info(struct net_device *dev, bool connect, uint8 *da)
 	}
 }
 #endif /* PCIE_FULL_DONGLE */
-#endif 
+#endif
 
 bool dhd_is_concurrent_mode(dhd_pub_t *dhd)
 {
@@ -8078,7 +8078,7 @@ dhd_get_concurrent_capabilites(dhd_pub_t *dhd)
 	}
 	return 0;
 }
-#endif 
+#endif
 
 
 
@@ -8124,7 +8124,7 @@ dhd_preinit_ioctls(dhd_pub_t *dhd)
 	uint32 hostreorder = 1;
 #endif /* DISABLE_11N */
 #endif /* PROP_TXSTATUS */
-#endif 
+#endif
 #ifdef PCIE_FULL_DONGLE
 	uint32 wl_ap_isolate;
 #endif /* PCIE_FULL_DONGLE */
@@ -8470,12 +8470,12 @@ dhd_preinit_ioctls(dhd_pub_t *dhd)
 		}
 #else
 	(void)concurrent_mode;
-#endif 
+#endif
 	}
 
 #if defined(RSDB_MODE_FROM_FILE)
 	(void)dhd_rsdb_mode_from_file(dhd);
-#endif 
+#endif
 
 #ifdef DISABLE_PRUNED_SCAN
 	if (FW_SUPPORTED(dhd, rsdb)) {
@@ -8650,7 +8650,7 @@ dhd_preinit_ioctls(dhd_pub_t *dhd)
 	if (ap_fw_loaded == TRUE) {
 		dhd_wl_ioctl_cmd(dhd, WLC_SET_DTIMPRD, (char *)&dtim, sizeof(dtim), TRUE, 0);
 	}
-#endif 
+#endif
 
 #if defined(KEEP_ALIVE)
 	{
@@ -8659,7 +8659,7 @@ dhd_preinit_ioctls(dhd_pub_t *dhd)
 
 #if defined(SOFTAP)
 	if (ap_fw_loaded == FALSE)
-#endif 
+#endif
 		if (!(dhd->op_mode &
 			(DHD_FLAG_HOSTAP_MODE | DHD_FLAG_MFG_MODE))) {
 			if ((res = dhd_keep_alive_onoff(dhd)) < 0)
@@ -9049,7 +9049,7 @@ dhd_preinit_ioctls(dhd_pub_t *dhd)
 	if (arpoe && !ap_fw_loaded) {
 #else
 	if (arpoe) {
-#endif 
+#endif
 		dhd_arp_offload_enable(dhd, TRUE);
 		dhd_arp_offload_set(dhd, dhd_arp_mode);
 	} else {
@@ -11563,7 +11563,7 @@ dhd_dev_retrieve_batch_scan(struct net_device *dev)
 	return (dhd_retreive_batch_scan_results(&dhd->pub));
 }
 #endif /* GSCAN_SUPPORT */
-#endif 
+#endif
 #ifdef RTT_SUPPORT
 /* Linux wrapper to call common dhd_pno_set_cfg_gscan */
 int
@@ -12355,7 +12355,7 @@ int dhd_net_set_fw_path(struct net_device *dev, char *fw)
 		DHD_INFO(("GOT STA FIRMWARE\n"));
 		ap_fw_loaded = FALSE;
 	}
-#endif 
+#endif
 	return 0;
 }
 
@@ -12633,10 +12633,10 @@ int dhd_os_wake_lock_timeout(dhd_pub_t *pub)
 #ifdef CONFIG_HAS_WAKELOCK
 		if (dhd->wakelock_rx_timeout_enable)
 			wake_lock_timeout(&dhd->wl_rxwake,
-				msecs_to_jiffies(dhd->wakelock_rx_timeout_enable));
+				msecs_to_jiffies(dhd->wakelock_rx_timeout_enable)/5);
 		if (dhd->wakelock_ctrl_timeout_enable)
 			wake_lock_timeout(&dhd->wl_ctrlwake,
-				msecs_to_jiffies(dhd->wakelock_ctrl_timeout_enable));
+				msecs_to_jiffies(dhd->wakelock_ctrl_timeout_enable)/5);
 #endif
 		dhd->wakelock_rx_timeout_enable = 0;
 		dhd->wakelock_ctrl_timeout_enable = 0;
@@ -14067,7 +14067,7 @@ bool dhd_sta_associated(dhd_pub_t *dhdp, uint32 bssidx, uint8 *mac)
 {
 	return dhd_find_sta(dhdp, bssidx, mac) ? TRUE : FALSE;
 }
-#endif 
+#endif
 
 #ifdef DHD_L2_FILTER
 arp_table_t*
