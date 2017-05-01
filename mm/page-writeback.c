@@ -72,7 +72,7 @@ static long ratelimit_pages = 32;
  * Start background writeback (via writeback threads) at this percentage
  */
 #ifdef CONFIG_LARGE_DIRTY_BUFFER
-int dirty_background_ratio = 5;
+int dirty_background_ratio = 10;
 #else
 int dirty_background_ratio = 0;
 #endif
@@ -97,7 +97,7 @@ int vm_highmem_is_dirtyable;
  * The generator of dirty data starts writeback at this percentage
  */
 #ifdef CONFIG_LARGE_DIRTY_BUFFER
-int vm_dirty_ratio = 25;
+int vm_dirty_ratio = 45;
 #else
 int vm_dirty_ratio = 0;
 #endif
