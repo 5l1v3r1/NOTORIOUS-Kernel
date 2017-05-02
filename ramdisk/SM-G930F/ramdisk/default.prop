@@ -34,7 +34,6 @@ ro.securestorage.support=false
 wlan.wfd.hdcp = disable
 boot.fps=32
 shutdown.fps=30
-debug.performance.tuning=1
 
 #Disable Android Logging
 debugtool.anrhistory=0
