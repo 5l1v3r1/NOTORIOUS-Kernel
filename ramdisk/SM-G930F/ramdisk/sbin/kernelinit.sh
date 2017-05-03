@@ -23,6 +23,32 @@
 /sbin/resetprop -n ro.boot.flash.locked "1"
 /sbin/resetprop -n ro.boot.ddrinfo "00000001"
 
+#-------------------------
+# MTWEAKS
+#-------------------------
+
+	# Make internal storage directory.
+    if [ ! -d $MTWEAKS_PATH ]; then
+	    $BB mkdir $MTWEAKS_PATH;
+    fi;
+
+	$BB chmod 0777 $MTWEAKS_PATH;
+	$BB chown 0.0 $MTWEAKS_PATH;
+
+	# Delete backup directory
+	$BB rm -rf $MTWEAKS_PATH/bk;
+
+    # Make backup directory.
+	$BB mkdir $MTWEAKS_PATH/bk;
+	$BB chmod 0777 $MTWEAKS_PATH/bk;
+	$BB chown 0.0 $MTWEAKS_PATH/bk;
+
+	# Save original voltages
+	$BB cat /sys/devices/system/cpu/cpufreq/mp-cpufreq/cluster1_volt_table > $MTWEAKS_PATH/bk/cpuCl1_stock_voltage
+	$BB cat /sys/devices/system/cpu/cpufreq/mp-cpufreq/cluster0_volt_table > $MTWEAKS_PATH/bk/cpuCl0_stock_voltage
+	$BB cat /sys/devices/14ac0000.mali/volt_table > $MTWEAKS_PATH/bk/gpu_stock_voltage
+	$BB chmod -R 755 $MTWEAKS_PATH/bk/*;
+
 # Deepsleep fix
 su -c 'echo "temporary none" >> /sys/class/scsi_disk/0:0:0:0/cache_type'
 su -c 'echo "temporary none" >> /sys/class/scsi_disk/0:0:0:1/cache_type'
