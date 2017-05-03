@@ -4,7 +4,7 @@
 export MODEL=herolte
 export VARIANT=eur
 export ARCH=arm64
-export VERSION=V1.3
+export VERSION=V1.4
 export BUILD_CROSS_COMPILE=/home/favus/space/toolchain/aarch64-linux-android-6.3-master/bin/aarch64-linux-android-
 export BUILD_JOB_NUMBER=`grep processor /proc/cpuinfo|wc -l`
 
