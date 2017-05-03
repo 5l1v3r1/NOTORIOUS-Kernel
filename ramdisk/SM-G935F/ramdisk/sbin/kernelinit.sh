@@ -13,6 +13,24 @@
 # limitations under the License.
 #
 
+# Busybox
+if [ -e /su/xbin/busybox ]; then
+	BB=/su/xbin/busybox;
+else if [ -e /sbin/busybox ]; then
+	BB=/sbin/busybox;
+else
+	BB=/system/xbin/busybox;
+fi;
+fi;
+
+MTWEAKS_PATH=/data/.mtweaks
+
+# Mount
+$BB mount -t rootfs -o remount,rw rootfs;
+$BB mount -o remount,rw /system;
+$BB mount -o remount,rw /data;
+$BB mount -o remount,rw /;
+
 # Knox set to 0 on working system
 /sbin/resetprop -n ro.boot.warranty_bit "0"
 /sbin/resetprop -n ro.warranty_bit "0"
@@ -54,3 +72,9 @@ su -c 'echo "temporary none" >> /sys/class/scsi_disk/0:0:0:0/cache_type'
 su -c 'echo "temporary none" >> /sys/class/scsi_disk/0:0:0:1/cache_type'
 su -c 'echo "temporary none" >> /sys/class/scsi_disk/0:0:0:2/cache_type'
 su -c 'echo "temporary none" >> /sys/class/scsi_disk/0:0:0:3/cache_type'
+
+# Unmount
+$BB mount -t rootfs -o remount,rw rootfs;
+$BB mount -o remount,ro /system;
+$BB mount -o remount,rw /data;
+$BB mount -o remount,ro /;
