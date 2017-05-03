@@ -415,8 +415,8 @@ KBUILD_CFLAGS   := -w -Wundef -Wstrict-prototypes -Wno-trigraphs \
 			 -fno-delete-null-pointer-checks \
 			 -fdiagnostics-show-option -Werror \
 			 -march=armv8-a+crc \
-		   -mcpu=cortex-a72.cortex-a53 -mtune=cortex-a72.cortex-a53 \
-		   -std=gnu89 \
+		   -mtune=cortex-a72.cortex-a53 \
+		   -std=gnu89
 
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
